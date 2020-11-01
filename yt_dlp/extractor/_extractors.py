@@ -1020,6 +1020,7 @@ from .linkedin import (
 )
 from .liputan6 import Liputan6IE
 from .listennotes import ListenNotesIE
+from .listennow import ListennowIE
 from .litv import LiTVIE
 from .livejournal import LiveJournalIE
 from .livestream import (
