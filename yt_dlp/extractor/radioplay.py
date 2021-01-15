@@ -11,7 +11,48 @@ from ..utils import (
 )
 
 
-class RadioplayPodcastIE(InfoExtractor):
+class RadioplayIE(InfoExtractor):
+    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no)/[^/]+/spiller/(?P<id>\d+)/?'
+
+    _TEST = {
+        'url': 'https://radioplay.no/radio-rock/spiller/146818938/',
+        'info_dict': {
+            'id': '146818938',
+            'ext': 'mp3',
+            'title': 'Radio Rock LIVE - med Stein Johnsen',
+            'timestamp': 1610733600,
+            'upload_date': '20210115',
+        },
+    }
+
+    def _extract_player(self, url):
+        video_id = self._match_id(url)
+        webpage = self._download_webpage(url, video_id)
+        player = self._parse_json(self._search_regex(
+            r'window\.__PRELOADED_STATE__\s*=\s*({.+})', webpage,
+            'player', default='{}'), video_id, transform_source=js_to_json)
+        video_info = player['player']['nowPlaying']
+
+        return (
+            video_id,
+            player,
+            video_info,
+        )
+
+    def _real_extract(self, url):
+        video_id, player, video_info = self._extract_player(url)
+        return {
+            'url': video_info['mediaurl'] or video_info['mediaurl_mp3'],
+            'id': video_id,
+            'title': video_info['title'],
+            'thumbnail': video_info.get('imageurl_square') or video_info.get('imageurl'),
+            'timestamp': parse_iso8601(video_info.get('starttime'), ' '),
+            'duration': int_or_none(video_info.get('duration')),
+            'channel': player.get('listenApi').get('data').get('stationName'),
+        }
+
+
+class RadioplayPodcastIE(RadioplayIE):
     _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no)/podcast/[^/]+/[^/]+/(?P<id>\d+)'
 
     _TEST = {
@@ -27,12 +68,7 @@ class RadioplayPodcastIE(InfoExtractor):
     }
 
     def _real_extract(self, url):
-        video_id = self._match_id(url)
-        webpage = self._download_webpage(url, video_id)
-        player = self._parse_json(self._search_regex(
-            r'window\.__PRELOADED_STATE__\s*=\s*({.+})', webpage,
-            'player', default='{}'), video_id, transform_source=js_to_json)
-        video_info = player['player']['nowPlaying']
+        video_id, player, video_info = self._extract_player(url)
 
         return {
             'url': video_info['PodcastExtMediaUrl'],
