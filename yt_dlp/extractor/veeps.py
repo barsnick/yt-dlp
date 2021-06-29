@@ -13,6 +13,8 @@ import re
 
 class VeepsIE(InfoExtractor):
     _VALID_URL = r'https?://(?P<channel>[a-zA-Z0-9]+)\.veeps\.com/stream/(?P<id>[0-9a-f]+)'
+    _LOGIN_URL = 'https://veeps.com/users/login'
+    _NETRC_MACHINE = 'veeps'
     _CSRF_TOKEN_RE = InfoExtractor._meta_regex('csrf-token')
     _M3U8_RE = r'<div[^>]+data-react-props=(?:\'|")[^>\'"]*stored_stream_asset&quot;:&quot;(?P<url>[^&>\'"]+)&quot;[^>\'"]*(?:\'|")[^>]*>'
 
@@ -31,7 +33,7 @@ class VeepsIE(InfoExtractor):
 
     def _login(self):
         first_login = self._download_webpage(
-            'https://veeps.com/users/login',
+            self._LOGIN_URL,
             None,
             note='obtaining initial session',
             errnote='failed to obtain initial session'
@@ -52,7 +54,7 @@ class VeepsIE(InfoExtractor):
         }).encode('utf-8')
 
         self._download_webpage(
-            'https://veeps.com/users/login',
+            self._LOGIN_URL,
             None,
             note='logging in',
             errnote='failed to login',
