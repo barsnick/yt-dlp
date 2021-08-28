@@ -1349,7 +1349,10 @@ from .radiode import RadioDeIE
 from .radiojavan import RadioJavanIE
 from .radiobremen import RadioBremenIE
 from .radiofrance import FranceCultureIE, RadioFranceIE
-from .radioplay import RadioplayPodcastIE
+from .radioplay import (
+    RadioplayIE,
+    RadioplayPodcastIE,
+)
 from .radiozet import RadioZetPodcastIE
 from .radiokapital import (
     RadioKapitalIE,
