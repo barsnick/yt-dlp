@@ -23,7 +23,7 @@ class URPlayIE(InfoExtractor):
             'upload_date': '20171214',
             'series': 'UR Samtiden - Livet, universum och rymdens märkliga musik',
             'duration': 2269,
-            'categories': ['Kultur & historia'],
+            'categories': ['Vetenskap & teknik'],
             'tags': ['Kritiskt tänkande', 'Vetenskap', 'Vetenskaplig verksamhet'],
             'episode': 'Om vetenskap, kritiskt tänkande och motstånd',
         },
