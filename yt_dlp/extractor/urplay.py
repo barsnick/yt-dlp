@@ -64,7 +64,7 @@ class URPlayIE(InfoExtractor):
         urplayer_streams = urplayer_data.get('streamingInfo', {})
 
         for k, v in urplayer_streams.get('raw', {}).items():
-            if not (k in ('sd', 'hd') and isinstance(v, dict)):
+            if not (k in ('sd', 'hd', 'mp3', 'm4a') and isinstance(v, dict)):
                 continue
             file_http = v.get('location')
             if file_http:
