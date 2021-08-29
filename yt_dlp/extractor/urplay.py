@@ -28,6 +28,26 @@ class URPlayIE(InfoExtractor):
             'episode': 'Om vetenskap, kritiskt tänkande och motstånd',
         },
     }, {
+        'url': 'https://urplay.se/program/222967-en-foralders-dagbok-mitt-barn-skadar-sig-sjalv',
+        'info_dict': {
+            'id': '222967',
+            'ext': 'mp4',
+            'title': 'En förälders dagbok : Mitt barn skadar sig själv',
+            'description': 'md5:b86bffdae04a7e9379d1d7e5947df1d1',
+            'timestamp': 1629676800,
+            'upload_date': '20210823',
+            'series': 'En förälders dagbok',
+            'duration': 1740,
+            'tags': ["Familjesociologi",
+                     "Föräldrar och barn",
+                     "Föräldraskap",
+                     "Psykiatri",
+                     "Samhällsvetenskap",
+                     "Självdestruktivt beteende",
+                     "Sociologi"],
+            'episode': 'Mitt barn skadar sig själv',
+        },
+    }, {
         'url': 'https://urskola.se/Produkter/190031-Tripp-Trapp-Trad-Sovkudde',
         'info_dict': {
             'id': '190031',
