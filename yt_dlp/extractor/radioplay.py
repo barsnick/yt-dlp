@@ -6,7 +6,7 @@ from .common import InfoExtractor
 
 
 class RadioplayIE(InfoExtractor):
-    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no)/[^/]+/spiller/(?P<id>\d+)/?'
+    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no|dk)/[^/]+/spiller/(?P<id>\d+)/?'
 
     _TEST = {
         'url': 'https://radioplay.no/radio-rock/spiller/178851646/',
@@ -47,7 +47,7 @@ class RadioplayIE(InfoExtractor):
 
 
 class RadioplayPodcastIE(RadioplayIE):
-    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no)/podcast/[^/]+/[^/]+/(?P<id>\d+)'
+    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no|dk)/podcast/[^/]+/[^/]+/(?P<id>\d+)'
 
     _TEST = {
         'url': 'https://radioplay.se/podcast/lilla-my/lyssna/2001126',
