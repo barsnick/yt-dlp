@@ -5,6 +5,34 @@ from ..utils import int_or_none, js_to_json, parse_iso8601, unified_strdate
 from .common import InfoExtractor
 
 
+class RadioplayRedirectIE(InfoExtractor):
+    _VALID_URL = r'https?://(?:live|lytte)\.radioplay\.(?:se|no|dk)/(?P<id>\d+)'
+
+    _TEST = {
+        'url': 'https://lytte.radioplay.no/10279674',
+        'info_dict': {
+            'id': '2035659',
+            'ext': 'mp3',
+            'title': 'Best of Høsten 2020',
+            'description': 'md5:701b09a2bcf9a75b6bfd8a27f359dcfa',
+            'timestamp': 1603429200,
+            'upload_date': '20201023',
+            'release_date': '20201023',
+            'channel': 'Siri og de gode hjelperne',
+            'thumbnail': r're:https?://.*',
+            'duration': 4182,
+        },
+    }
+
+    def _real_extract(self, url):
+        video_id = self._match_id(url)
+        webpage = self._download_webpage(url, video_id)
+        url = self._search_regex(
+            r'desktopUrl\s*:\s*\'([^\']+)\'', webpage,
+            'redirect', video_id)
+        return self.url_result(url)
+
+
 class RadioplayIE(InfoExtractor):
     _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no|dk)/[^/]+/spiller/(?P<id>\d+)/?'
 
