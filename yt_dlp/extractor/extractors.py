@@ -1346,6 +1346,7 @@ from .radiofrance import RadioFranceIE
 from .radioplay import (
     RadioplayIE,
     RadioplayPodcastIE,
+    RadioplayRedirectIE,
 )
 from .radiozet import RadioZetPodcastIE
 from .radiokapital import (
