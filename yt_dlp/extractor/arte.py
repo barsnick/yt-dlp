@@ -95,6 +95,24 @@ class ArteTVIE(ArteTVBaseIE):
         )?
     ''')
 
+    __GEO_COUNTRIES = {
+        # obtained by exhaustive testing
+        # with both 'BE' sometimes works, sometimes doesn't
+        'EUR_DE_FR': frozenset((
+            'AT', 'BL', 'CH', 'DE', 'FR', 'GF', 'GP', 'LI',
+            'MC', 'MF', 'MQ', 'NC', 'PF', 'PM', 'RE', 'WF',
+            'YT',
+        )),
+        'SAT': frozenset((
+            'AD', 'AT', 'AX', 'BG', 'BL', 'CH', 'CY', 'CZ',
+            'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GF',
+            'GR', 'HR', 'HU', 'IE', 'IS', 'IT', 'KN', 'LI',
+            'LT', 'LU', 'LV', 'MC', 'MF', 'MQ', 'MT', 'NC',
+            'NL', 'NO', 'PF', 'PL', 'PM', 'PT', 'RE', 'RO',
+            'SE', 'SI', 'SK', 'SM', 'VA', 'WF', 'YT',
+        )),
+    }
+
     def _real_extract(self, url):
         # Link to the host’s player may change at their whim. As of writing this extractor, it was at:
         # <https://static-cdn.arte.tv/replay/_next/static/chunks/d3664e6f.b4959fdbab7f97e2.js>
@@ -113,8 +131,9 @@ class ArteTVIE(ArteTVBaseIE):
         restriction = config['data']['attributes']['restriction'] or {}
         geoblocking = restriction.get('geoblocking') or {}
         if geoblocking.get('restrictedArea'):
-            countries = tuple(code for code in geoblocking['code'].split('_') if code != 'EUR')
-            raise GeoRestrictedError('Video is geoblocked', countries=countries)
+            raise GeoRestrictedError(
+                f'Video restricted to {geoblocking["code"]!r}',
+                countries=self.__GEO_COUNTRIES.get(geoblocking['code']))
 
         rights = config['data']['attributes']['rights']
 
