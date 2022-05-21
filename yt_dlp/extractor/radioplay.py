@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from ..utils import int_or_none, js_to_json, parse_iso8601, unified_strdate
 from .common import InfoExtractor
+import re
 
 
 class RadioplayRedirectIE(InfoExtractor):
@@ -74,6 +75,16 @@ class RadioplayIE(InfoExtractor):
         }
 
 
+class RadioplayPodcastRedirectIE(InfoExtractor):
+    _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no|dk)/podcast/[^/]+/id-(?P<id>\d+)'
+
+    def _real_extract(self, url):
+        video_id = self._match_id(url)
+        webpage = self._download_webpage(url, video_id)
+        for url in re.findall(r'<div[^>]* data-test="audible-now-playing-button-container"[^>]*>.*<a href="([^"]+)"', webpage):
+            return self.url_result(url)
+
+
 class RadioplayPodcastIE(RadioplayIE):
     _VALID_URL = r'https?://(?:www\.)?radioplay\.(?:se|no|dk)/podcast/[^/]+/[^/]+/(?P<id>\d+)'
 
@@ -90,6 +101,7 @@ class RadioplayPodcastIE(RadioplayIE):
     }
 
     def _real_extract(self, url):
+
         video_id, player, video_info = self._extract_player(url)
 
         return {

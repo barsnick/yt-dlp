@@ -1352,6 +1352,7 @@ from .radiofrance import FranceCultureIE, RadioFranceIE
 from .radioplay import (
     RadioplayIE,
     RadioplayPodcastIE,
+    RadioplayPodcastRedirectIE,
     RadioplayRedirectIE,
 )
 from .radiozet import RadioZetPodcastIE
