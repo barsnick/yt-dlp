@@ -114,9 +114,6 @@ class ArteTVIE(ArteTVBaseIE):
     }
 
     def _real_extract(self, url):
-        # Link to the host’s player may change at their whim. As of writing this extractor, it was at:
-        # <https://static-cdn.arte.tv/replay/_next/static/chunks/d3664e6f.b4959fdbab7f97e2.js>
-
         mobj = self._match_valid_url(url)
         video_id = mobj.group('id')
         lang = mobj.group('lang') or mobj.group('lang_2')
