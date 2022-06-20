@@ -1625,6 +1625,11 @@ from .radiokapital import (
     RadioKapitalIE,
     RadioKapitalShowIE,
 )
+from .radioplay import (
+    RadioplayIE,
+    RadioplayPodcastRedirectIE,
+    RadioplayRedirectIE,
+)
 from .radioradicale import RadioRadicaleIE
 from .radiozet import RadioZetPodcastIE
 from .radlive import (
