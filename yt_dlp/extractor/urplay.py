@@ -4,6 +4,7 @@ from ..utils import (
     ExtractorError,
     int_or_none,
     ISO639Utils,
+    merge_dicts,
     parse_age_limit,
     try_get,
     unified_timestamp,
@@ -50,6 +51,24 @@ class URPlayIE(InfoExtractor):
             'season': 'Säsong 1',
         },
     }, {
+        'url': 'https://urplay.se/program/222967-en-foralders-dagbok-mitt-barn-skadar-sig-sjalv',
+        'info_dict': {
+            'id': '222967',
+            'ext': 'mp4',
+            'title': 'En förälders dagbok : Mitt barn skadar sig själv',
+            'description': 'md5:9f771eef03a732a213b367b52fe826ca',
+            'thumbnail': r're:^https?://.+\.jpg',
+            'timestamp': 1629676800,
+            'upload_date': '20210823',
+            'series': 'En förälders dagbok',
+            'duration': 1740,
+            'age_limit': 15,
+            'episode_number': 3,
+            'categories': 'count:2',
+            'tags': 'count:7',
+            'episode': 'Mitt barn skadar sig själv',
+        },
+    }, {
         'url': 'http://urskola.se/Produkter/155794-Smasagor-meankieli-Grodan-i-vida-varlden',
         'only_matching': True,
     }]
@@ -73,17 +92,6 @@ class URPlayIE(InfoExtractor):
         host = self._download_json('http://streaming-loadbalancer.ur.se/loadbalancer.json', video_id)['redirect']
         formats = []
         urplayer_streams = urplayer_data.get('streamingInfo', {})
-
-        for k, v in urplayer_streams.get('raw', {}).items():
-            if not (k in ('sd', 'hd') and isinstance(v, dict)):
-                continue
-            file_http = v.get('location')
-            if file_http:
-                formats.extend(self._extract_wowza_formats(
-                    'http://%s/%splaylist.m3u8' % (host, file_http),
-                    video_id, skip_protocols=['f4m', 'rtmp', 'rtsp']))
-        self._sort_formats(formats)
-
         subtitles = {}
 
         def parse_lang_code(code):
@@ -95,18 +103,29 @@ class URPlayIE(InfoExtractor):
                 lang = ISO639Utils.short2long(lang)
             return lang or None
 
-        for k, v in (urplayer_data['streamingInfo'].get('sweComplete') or {}).items():
-            if (k in ('sd', 'hd') or not isinstance(v, dict)):
+        all_formats = merge_dicts(urplayer_streams.get('raw', {}),
+                                  urplayer_streams.get('sweComplete', {}))
+
+        for k, v in all_formats.items():
+            if not isinstance(v, dict):
                 continue
-            lang, sttl_url = (v.get(kk) for kk in ('language', 'location', ))
-            if not sttl_url:
-                continue
+            lang, media_url = (v.get(kk) for kk in ('language', 'location', ))
             lang = parse_lang_code(lang)
-            if not lang:
-                continue
-            sttl = subtitles.get(lang) or []
-            sttl.append({'ext': k, 'url': sttl_url, })
-            subtitles[lang] = sttl
+            if (k in ('sd', 'hd', 'mp3', 'm4a')):
+                if media_url:
+                    formats.extend(self._extract_wowza_formats(
+                        'http://%s/%splaylist.m3u8' % (host, media_url),
+                        video_id, skip_protocols=['f4m', 'rtmp', 'rtsp']))
+            elif (k in ('tt', 'vtt')):
+                if not media_url:
+                    continue
+                if not lang:
+                    continue
+                sttl = subtitles.get(lang) or []
+                sttl.append({'ext': k, 'url': media_url, })
+                subtitles[lang] = sttl
+
+        self._sort_formats(formats)
 
         image = urplayer_data.get('image') or {}
         thumbnails = []
