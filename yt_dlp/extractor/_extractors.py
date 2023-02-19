@@ -1505,6 +1505,7 @@ from .pluralsight import (
 from .podbayfm import PodbayFMIE, PodbayFMChannelIE
 from .podchaser import PodchaserIE
 from .podomatic import PodomaticIE
+from .podplay import PodplayIE
 from .pokemon import (
     PokemonIE,
     PokemonWatchIE,
