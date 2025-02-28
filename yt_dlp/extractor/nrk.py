@@ -184,8 +184,6 @@ class NRKIE(NRKBaseIE):
         for asset in playable['assets']:
             if not isinstance(asset, dict):
                 continue
-            if asset.get('encrypted'):
-                continue
             format_url = url_or_none(asset.get('url'))
             if not format_url:
                 continue
