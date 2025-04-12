@@ -180,9 +180,13 @@ class NRKIE(NRKBaseIE):
 
         playable = manifest['playable']
 
+        has_drm_formats = False
         formats = []
         for asset in playable['assets']:
             if not isinstance(asset, dict):
+                continue
+            if asset.get('encrypted') and asset.get('encryptionScheme') != 'statickey':
+                has_drm_formats = True
                 continue
             format_url = url_or_none(asset.get('url'))
             if not format_url:
@@ -196,6 +200,9 @@ class NRKIE(NRKBaseIE):
                     'format_id': asset_format,
                     'vcodec': 'none',
                 })
+
+        if not formats and has_drm_formats:
+            self.report_drm(video_id)
 
         data = call_playback_api('metadata')
 
